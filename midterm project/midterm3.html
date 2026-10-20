@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<body>
+    <canvas width="600" height="600" id="canvas" style="width: 600px; height: 600px;"></canvas>
+</body>
+
+<script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width, h = canvas.height;
+
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width *= dpr, canvas.height *= dpr;
+    ctx.scale(dpr, dpr);
+
+    // variables for coordinates
+    const cx = w / 2, cy = h / 2;
+
+    const radiusA = w * 0.6, radiusB = radiusA / 2;
+
+    function animate() {
+
+        // sunset background
+        const gradient = ctx.createLinearGradient(0, 0, 0, h);
+
+        gradient.addColorStop(0, "pink");
+        gradient.addColorStop(0.4, "orange");
+        gradient.addColorStop(0.7, "orangered");
+        gradient.addColorStop(1, "purple");
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, w, h);
+
+        // the sun up and down
+        let sunY = cy + Math.sin(Date.now() / 500) * 20;
+
+        // sunset rays
+        ctx.strokeStyle = "orange";
+        ctx.lineWidth = 20;
+        ctx.lineCap = "round";
+
+        for (let i = 0; i < 8; i++) {
+            let angle = i * Math.PI / 4;
+
+            let x1 = cx + Math.cos(angle) * radiusB;
+            let y1 = sunY + Math.sin(angle) * radiusB;
+
+            let x2 = cx + Math.cos(angle) * (radiusB + 60);
+            let y2 = sunY + Math.sin(angle) * (radiusB + 70);
+
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+
+        // body sun
+        ctx.beginPath();
+        ctx.arc(
+            cx,
+            sunY,
+            radiusB,
+            0,
+            Math.PI * 2
+        );
+
+        // sun gradient
+        const sunGradient = ctx.createLinearGradient(
+            cx - radiusB, sunY,
+            cx + radiusB, sunY
+        );
+
+        sunGradient.addColorStop(0, "yellow");
+        sunGradient.addColorStop(0.5, "orange");
+        sunGradient.addColorStop(1, "red");
+
+        ctx.fillStyle = sunGradient;
+        ctx.fill();
+
+        // repeat the animation
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+
+</script>
+</html>
